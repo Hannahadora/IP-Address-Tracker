@@ -6,7 +6,13 @@
   <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://kit.fontawesome.com/d2e0cde1e0.js" crossorigin="anonymous"></script>
 
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+  
   <link rel="icon" type="image/png" sizes="32x32" href="./ip-address-tracker-master/ip-address-tracker-master/images/favicon-32x32.png">
   
   <title>Frontend Mentor | IP Address Tracker</title>
@@ -15,27 +21,18 @@
   <style>
     .attribution { font-size: 11px; text-align: center; }
     .attribution a { color: hsl(228, 45%, 44%); }
+
+    #mapid {
+      height: 450px;
+      width: 100%;
+    }
   </style>
 </head>
 <body class="m-0 p-0 h-screen">
 
-  <!-- IP Address Tracker
-
-  Search for any IP address or domain
-
-  IP Address
-  Location
-  Timezone -->
-    <!-- UTC  -->
-    <!-- add offset value dynamically using the API -->
-  <!-- ISP -->
+ 
   
-  <!-- <div class="attribution">
-    Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
-    Coded by <a href="#">Your Name Here</a>.
-  </div> -->
-
-
+  
 
       <div class="m-0 w-full bg-center bg-cover bg-no-repeat md:h-60 h-80" style="background-image: url('./ip-address-tracker-master/ip-address-tracker-master/images/pattern-bg.png');">   
         <div class="pt-5 pb-20 text-center">
@@ -48,12 +45,17 @@
         </div>
       </div>
 
-      <div class="w-full relative">
+      <!-- <div class="w-full relative">
         <iframe class="map w-full" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d855558.4803288891!2d6.736835505390285!3d5.045202273372837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1069eb680cf52ee3%3A0x88546243f24fb95c!2sRivers!5e0!3m2!1sen!2sng!4v1617807168273!5m2!1sen!2sng" width="100%" height="455" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
       
         <div class="absolute top-72 lg:left-96 md:left-40 left-20">
           <svg xmlns="http://www.w3.org/2000/svg" width="46" height="56"><path fill-rule="evenodd" d="M39.263 7.673c8.897 8.812 8.966 23.168.153 32.065l-.153.153L23 56 6.737 39.89C-2.16 31.079-2.23 16.723 6.584 7.826l.153-.152c9.007-8.922 23.52-8.922 32.526 0zM23 14.435c-5.211 0-9.436 4.185-9.436 9.347S17.79 33.128 23 33.128s9.436-4.184 9.436-9.346S28.21 14.435 23 14.435z"/></svg>
         </div>
+      </div> -->
+
+      <div id="mapid">
+
+          
       </div>
 
     
@@ -85,7 +87,32 @@
 
   
 
-  
+  <!-- <div class="attribution">
+    Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
+    Coded by <a href="#">Your Name Here</a>.
+  </div> -->
+
+
+
+
+
+
+
+<script>
+      var mymap = L.map('mapid').setView([0, 0], 1);
+
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1,
+        accessToken: 'your.mapbox.access.token'
+    }).addTo(mymap);
+
+    var marker = L.marker([51.5, -0.09]).addTo(mymap);
+</script>
+
 
 
 
