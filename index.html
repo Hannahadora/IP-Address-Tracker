@@ -31,6 +31,11 @@
       height: 700px;
       /* margin-top: 106px; */
     }
+    @media screen and (max-width:1024px) {
+      #cont {
+        height: 1154px
+      }
+    }
 
     #formi{
       z-index: 99999999999999;
@@ -47,14 +52,14 @@
         <div class="pt-5 pb-20 text-center">
           <p  class="text-2xl font-medium my-5 text-white">IP Address Tracker</p>
           <div class="flex items-center justify-center gap-0">
-            <input id="add" class="lg:w-1/3 md:w-1/2 w-9/12 h-10 focus:outline-none py-2 bg-white border-0 px-3 rounded-l-lg text-base" type="text" placeholder="Search for any IP address or domain">
-            <div class="bg-black p-3 h-10 rounded-r-lg text-white">
+            <input id="textBox" class="lg:w-1/3 md:w-1/2 w-9/12 h-10 focus:outline-none py-2 bg-white border-0 px-3 rounded-l-lg text-base" type="address" placeholder="Search for any IP address or domain">
+            <div class="bg-black hover:bg-gray-700 p-3 h-10 rounded-r-lg text-white">
               <svg id="go" xmlns="http://www.w3.org/2000/svg" width="11" height="14"><path fill="none" stroke="#FFF" stroke-width="3" d="M2 1l6 6-6 6"/></svg> 
+            </div>
           </div>
         </div>
-     
-
-    </div>
+      
+   
 
 
 
@@ -62,22 +67,22 @@
 
         <div class=" px-5">
           <label for="IPaddress" class="text-sm" style="color: hsl(0, 0%, 59%);">IP ADDRESS</label>
-          <input type="text" id="IPaddress" name="IPaddress" class="w-full focus:outline-none font-bold text-base" disabled style="color:  hsl(0, 0%, 17%);">
+          <input type="text" id="IPaddress" name="IPaddress" class="w-full h-auto focus:outline-none font-bold text-base" disabled style="color:  hsl(0, 0%, 17%);">
         </div>
         
         <div class="lg:border-l px-5">
           <label for="location" class="text-sm" style="color: hsl(0, 0%, 59%);">LOCATION</label>
-          <input type="text" id="location" name="location" class="w-full focus:outline-none font-bold text-base" disabled style="color:  hsl(0, 0%, 17%);">
+          <input type="text" id="location" name="location" class="w-full h-auto focus:outline-none font-bold text-base" disabled style="color:  hsl(0, 0%, 17%);">
         </div>
 
         <div class="lg:border-l px-5">
           <label for="timeZone" class="text-sm" style="color: hsl(0, 0%, 59%);">TIMEZONE</label>
-          <input type="text" id="timeZone" name="timeZone" class="w-full focus:outline-none font-bold text-base" disabled style="color:  hsl(0, 0%, 17%);">
+          <input type="text" id="timeZone" name="timeZone" class="w-full h-auto focus:outline-none font-bold text-base" disabled style="color:  hsl(0, 0%, 17%);">
         </div>
 
         <div class="lg:border-l px-5">
           <label for="isp" class="text-sm" style="color: hsl(0, 0%, 59%);">ISP</label>
-          <input type="text" id="isp" name="isp" class="w-full focus:outline-none font-bold text-base" disabled style="color:  hsl(0, 0%, 17%);">
+          <input type="text" id="isp" name="isp" class="w-full h-auto focus:outline-none font-bold text-base" disabled style="color:  hsl(0, 0%, 17%);">
         </div>
       </form>
 
@@ -109,25 +114,80 @@
 
 <script>
 
-      var map = L.map('map', {
-     center: [51.505, -0.09],
-     zoom: 15
-   });
-   L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-     maxZoom: 18,
-    id: 'mapbox/streets-v11',
-    tileSize: 512,
-    zoomOffset: -1,
-    accessToken: 'your.mapbox.access.token'
-   }).addTo(map);
+  //     var map = L.map('map', {
+  //    center: [51.505, -0.09],
+  //    zoom: 15
+  //  });
+  //  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+  //    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+  //    maxZoom: 18,
+  //   id: 'mapbox/streets-v11',
+  //   tileSize: 512,
+  //   zoomOffset: -1,
+  //   accessToken: 'your.mapbox.access.token'
+  //  }).addTo(map);
 
-   var marker = L.marker([51.5, -0.09]).addTo(map);
+  //  var marker = L.marker([51.5, -0.09]).addTo(map);
+
+   
+
+const textBox = document.getElementById('textBox');
+const button = document.getElementById('go');
+
+
+go.addEventListener('click', getIp)
+
+function getIp(e) {
+    fetch(`https://geo.ipify.org/api/v1?apiKey=at_5y6bScl8CynwiXQ28IQDLcHl1OqHe&ipAddress=${textBox.value}`)
+    .then(function(res) {
+        return res.json()
+    })
+
+    .then(function(data) {
+        console.log(data);
+       
+        document.getElementById('IPaddress').value = data.ip;      
+        document.getElementById('location').value = data.location.region, data.location.country;  
+        document.getElementById('timeZone').value = data.location.timezone;
+        document.getElementById('isp').value = data.isp;
+        document.getElementById('textBox').value = '';
+
+        var map = L.map('map', {
+      center: [data.location.lat, data.location.lng],
+      zoom: 15
+    });
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 18,
+      id: 'mapbox/streets-v11',
+      tileSize: 512,
+      zoomOffset: -1,
+      accessToken: 'your.mapbox.access.token'
+    }).addTo(map);
+
+
+        var marker = L.marker([data.location.lat, data.location.lng]).addTo(map);
+    })
+
+   .catch(function(err) {
+      //  console.log(err); 
+   });
+
+  e.preventDefault(); 
+
+  console.log(textBox.value);
+}
+
+
+
+
+
+
 
 </script>
 
 
-<script src="geo.js"></script>
+<!-- <script src="geo.js"></script> -->
 
 
 </body>
