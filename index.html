@@ -36,13 +36,23 @@
         height: 1154px
       }
     }
+   
 
     #formi{
       z-index: 99999999999999;
     }
+
+    #loader{
+      position: absolute;
+      top:160%;
+      left:50%;
+      box-sizing: border-box;
+      transform: translate(-50%, -50%);
+      z-index: 99999999999999999999999999999999;
+    }
   </style>
 </head>
-<body class="m-0 p-0 h-screen fixed w-full">
+<body class="m-0 p-0 h-screen md:fixed w-full">
 
  
   
@@ -53,7 +63,7 @@
           <p  class="text-2xl font-medium my-5 text-white">IP Address Tracker</p>
           <div class="flex items-center justify-center gap-0">
             <input id="textBox" class="lg:w-1/3 md:w-1/2 w-9/12 h-10 focus:outline-none py-2 bg-white border-0 px-3 rounded-l-lg text-base" type="address" placeholder="Search for any IP address or domain">
-            <div class="bg-black hover:bg-gray-700 p-3 h-10 rounded-r-lg text-white">
+            <div class="bg-black hover:bg-blue-600 p-3 h-10 rounded-r-lg text-white">
               <svg id="go" xmlns="http://www.w3.org/2000/svg" width="11" height="14"><path fill="none" stroke="#FFF" stroke-width="3" d="M2 1l6 6-6 6"/></svg> 
             </div>
           </div>
@@ -89,7 +99,9 @@
 
 
 
-
+      <div id="loader" class="hidden w-40 bg-white text-black py-2 px-3">
+        <img src="./ip-address-tracker-master/ip-address-tracker-master/images/Karaoke-load-unscreen.gif" alt="">
+      </div>
 
 
 
@@ -113,31 +125,37 @@
 
 
 <script>
+  
+      var map = L.map('map', {
+     center: [0, -0],
+     zoom: 13
+   });
+   L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+     maxZoom: 18,
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'your.mapbox.access.token'
+   }).addTo(map);
 
-  //     var map = L.map('map', {
-  //    center: [51.505, -0.09],
-  //    zoom: 15
-  //  });
-  //  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-  //    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-  //    maxZoom: 18,
-  //   id: 'mapbox/streets-v11',
-  //   tileSize: 512,
-  //   zoomOffset: -1,
-  //   accessToken: 'your.mapbox.access.token'
-  //  }).addTo(map);
-
-  //  var marker = L.marker([51.5, -0.09]).addTo(map);
+   var marker = L.marker([0, -0]).addTo(map);
 
    
 
 const textBox = document.getElementById('textBox');
 const button = document.getElementById('go');
 
-
 go.addEventListener('click', getIp)
 
 function getIp(e) {
+
+  
+  document.getElementById('loader').style.display = 'block';
+        setTimeout(function() {
+          document.getElementById('loader').style.display = 'none';
+        }, 6000)
+
     fetch(`https://geo.ipify.org/api/v1?apiKey=at_5y6bScl8CynwiXQ28IQDLcHl1OqHe&ipAddress=${textBox.value}`)
     .then(function(res) {
         return res.json()
@@ -145,28 +163,21 @@ function getIp(e) {
 
     .then(function(data) {
         console.log(data);
-       
+
         document.getElementById('IPaddress').value = data.ip;      
         document.getElementById('location').value = data.location.region, data.location.country;  
         document.getElementById('timeZone').value = data.location.timezone;
         document.getElementById('isp').value = data.isp;
-        document.getElementById('textBox').value = '';
-
-        var map = L.map('map', {
-      center: [data.location.lat, data.location.lng],
-      zoom: 15
-    });
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 18,
-      id: 'mapbox/streets-v11',
-      tileSize: 512,
-      zoomOffset: -1,
-      accessToken: 'your.mapbox.access.token'
-    }).addTo(map);
-
+       
+        map.flyTo(new L.LatLng(data.location.lat, data.location.lng));
 
         var marker = L.marker([data.location.lat, data.location.lng]).addTo(map);
+        
+        marker.bindPopup(`<b>Hello</b><br>Welcome to ${data.location.country} , ${data.location.region}.`).openPopup();
+
+        document.getElementById('textBox').value = '';
+
+        
     })
 
    .catch(function(err) {
